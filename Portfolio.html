@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Game Design Portfolio - Aaron Woodward</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root {
+      --bg: #071029;
+      --bg-alt: #0b1a2b;
+      --accent: #c9a34b;
+      --text: #f5f5f2;
+      --muted: #bfc6d0;
+      --card-radius: 14px;
+      --max-width: 1100px;
+      --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.55);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #0b2036 0, #071029 55%, #02060b 100%);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 32px 16px 64px;
+    }
+
+    .page { max-width: var(--max-width); margin: 0 auto; }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .intro { max-width: 620px; }
+
+    .intro h1 {
+      font-size: clamp(2.4rem, 3vw, 3rem);
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+
+    .intro h2 {
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .intro p { color: var(--muted); max-width: 540px; }
+
+    .tagline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-bottom: 12px;
+    }
+
+    .tagline-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ffd27a;
+      box-shadow: 0 0 10px #ffd27a;
+    }
+
+    .contact { text-align: right; min-width: 220px;}
+
+    .contact a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    main { display: flex; flex-direction: column; gap: 24px; }
+
+    .section-title {
+      font-size: 0.9rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    /* PROJECT GRID */
+    .games-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 20px;
+      padding: 18px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(201,163,75,0.06), rgba(0, 0, 0, 0.6));
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .games-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-height: 520px;
+      overflow-y: auto;
+      padding-right: 6px;
+      padding-bottom: 1px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0b1a2b;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #c9a34b;
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #E9B430;
+    }
+
+    .game-card {
+      background: rgba(6, 10, 18, 0.9);
+      border-radius: var(--card-radius);
+      padding: 14px 14px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+      cursor: pointer;
+    }
+
+    .game-card:hover {
+      border-color: var(--accent);
+      background: rgba(10, 16, 30, 0.98);
+      transform: translateY(1px);
+    }
+
+    .game-card.selected {
+      border-color: var(--accent);
+      background: rgba(201,163,75,0.12);
+      box-shadow: 0 0 0 2px rgba(201,163,75,0.22);
+    }
+
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+
+    .game-title { font-size: 1rem; font-weight: 600; }
+    .game-meta { font-size: 0.75rem; color: var(--muted); }
+    .game-role { font-size: 0.8rem; color: var(--accent); margin-bottom: 4px; }
+
+    .game-points {
+      margin-top: 6px;
+      padding-left: 18px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .game-points li + li { margin-top: 2px; }
+
+    .game-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .game-tag {
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--muted);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    /* MEDIA PANEL */
+    .game-media {
+      background: var(--bg-alt);
+      border-radius: 16px;
+      padding: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .media-window {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      height: 240px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .media-window img {
+      width: 100%;
+	  height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .media-window img.visible {
+      opacity: 1;
+    }
+
+    .media-label {
+      position: absolute;
+      bottom: 1px;
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.7);
+      color: var(--muted);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* WORK SAMPLES */
+    .samples-section { margin-top: 50px; }
+
+    .samples-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+      margin-top: 16px;
+    }
+
+    .sample-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.15s ease, border-color 0.2s ease;
+    }
+
+    .sample-card:hover {
+      transform: translateY(+2px);
+      border-color: var(--accent);
+    }
+
+    .sample-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+
+    .sample-title {
+      padding: 10px;
+      font-size: 0.9rem;
+      color: var(--accent);
+      text-decoration: none;
+      display: flex;
+	  justify-content: center;
+    }
+
+    footer {
+      margin-top: 40px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 800px) {
+      header { flex-direction: column; align-items: flex-start; }
+      .contact { text-align: left; }
+      .games-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="page">
+    <header>
+      <div class="intro">
+        <div class="tagline">
+          <span class="tagline-dot"></span>
+          <span>Gameplay Designer / Engineer</span>
+        </div>
+        <h2>Portfolio</h2>
+        <h1>Aaron Woodward</h1>
+        <p>Technical generalist that excels at autonomously designing / implementing features (+ supporting tools and automation!) while collaborating across disciplines to create robust experiences that delight players.</p>
+      </div>
+
+      <div class="contact">
+        <h2>Skills</h2>
+        <div class="pill">Unreal Engine 4/5</div>
+        <div class="pill">Blueprint Scripting</div>
+        <div class="pill">C++ Programming</div><br />
+        <div class="pill">Perforce & Git</div>
+        <div class="pill">Automated Testing</div>
+        <div class="pill">Technical Design</div><br />
+        <div class="pill">Cross-Platform</div>
+        <div class="pill">Tools Programming</div>
+        <div class="pill">Collaboration</div>
+        <!-- <a href="mailto:youremail@example.com">youremail@example.com</a> -->
+      </div>
+    </header>
+
+    <main>
+      <div>
+        <h3 style="margin-bottom: 10px;">Games I’ve Worked On</h3>
+      </div>
+
+      <section class="games-grid">
+        <!-- PROJECT LIST -->
+        <div class="games-list">
+
+          <article class="game-card" data-game="game1">
+            <div class="game-header">
+              <div class="game-title">LEGO Fortnite</div>
+              <div class="game-meta">PC + Console + Mobile · Aug 22024 - Present</div>
+            </div>
+            <div class="game-role">Game Designer</div>
+            <ul class="game-points">
+              <h4>Odyssey</h4>
+              <li>Ninjago Spinjitzu ability and nunchuck weapon</li>
+              <li>Collaborated on Ninjago update's FTUE questline</li>
+              <li>Designed & implemented physics toys like pressure / trigger plates.</li>
+              <br />
+              <h4>Brick Life</h4>
+              <li>Owned the player housing, decorating features, and the FTUE.</li>
+              <li>Designed & implemented the Star Wars festival update, notably the lightsaber battles.</li>
+              <li>Designed & implemented the potions system (transmutation, gravity modifiers, and invisibility)</li>
+              <li>Created tools to convert and manage thousands of assets from Odyssey into Brick Life.</li>
+            </ul>
+            <div class="game-tags">
+              <span class="game-tag">UE5</span>
+              <span class="game-tag">GAS</span>
+              <span class="game-tag">3C's</span>
+              <span class="game-tag">Systems / Economy Design</span>
+              <span class="game-tag">Quest Design</span>
+            </div>
+          </article>
+
+          <article class="game-card" data-game="game2">
+            <div class="game-header">
+              <div class="game-title">Hytale</div>
+              <div class="game-meta">PC + Console + Mobile · March 2023 - July 2024</div>
+            </div>
+            <div class="game-role">Senior Technical Designer</div>
+            <ul class="game-points">
+              <li>Prototyped adventure gameplay (combat, movement, loot drops).</li>
+              <li>Stood up world generation using a SIMD library.</li>
+              <li>Expanded functionality of our modeling tool to meet artists' needs. <a href="https://github.com/JannisX11/blockbench/commits?author=AaronWoodward" style="color: #c9a34b;" target="_blank">(Including some public contributions to Blockbench.)</a></li>
+            </ul>
+            <div class="game-tags">
+           	  <span class="game-tag">Systems Design</span>
+              <span class="game-tag">Lua</span>
+              <span class="game-tag">Javascript</span>
+              <span class="game-tag">C++</span>
+              <span class="game-tag">Custom Engine</span>
+            </div>
+          </article>
+
+          <article class="game-card" data-game="game3">
+            <div class="game-header">
+              <div class="game-title">Gears of War: E-Day</div>
+              <div class="game-meta">PC + Console · March 2022 - March 2023</div>
+            </div>
+            <div class="game-role">Quality Engineering Lead</div>
+            <ul class="game-points">
+              <li>Created an internal test framework, making tests easier to author and faster to run.</li>
+              <li>Defined direction for studio's quality efforts.</li>
+              <li>Hired and led a small team.</li>
+            </ul>
+            <div class="game-tags">
+              <span class="game-tag">Leadership</span>
+              <span class="game-tag">CI/CD</span>
+              <span class="game-tag">Test Automation</span>
+              <span class="game-tag">C++</span>
+              <span class="game-tag">UE5</span>
+            </div>
+          </article>
+
+          <article class="game-card" data-game="game4">
+            <div class="game-header">
+              <div class="game-title">Minecraft</div>
+              <div class="game-meta">PC + Console + Mobile · August 2018 to March 2022</div>
+            </div>
+            <div class="game-role">Quality Engineer</div>
+            <ul class="game-points">
+              <li>Tech lead for the Signals team which created tooling (automated test frameworks, telemetry dashboards, etc.) and evangelized the adoption of automating tested.</li>
+              <li>Owned and expanded the server test framework, providing easy access to dependencies for easier, more reliable automated tests.</li>
+              <li>There's a <a href="https://gdcvault.com/play/1027345/Lessons-Learned-in-Adapting-the" style="color: #c9a34b;" target="_blank">GDC talk</a> that discusses our results.</li>
+            </ul>
+            <br />
+            <div class="game-role">Gameplay Engineer</div>
+            <ul class="game-points">
+              <li>Designed and implemented features like the <a href="https://minecraft.wiki/w/Bell" style="color: #c9a34b;" target="_blank">bell</a>, <a href="https://minecraft.wiki/w/Patrol" style="color: #c9a34b;" target="_blank">patrols</a>, <a href="https://minecraft.wiki/w/Grindstone" style="color: #c9a34b;" target="_blank">grindstone</a>, and contributions to the <a href="https://minecraft.wiki/w/Village_mechanics#Bedrock_villages" style="color: #c9a34b;" target="_blank">village</a> and <a href="https://minecraft.wiki/w/Raid" style="color: #c9a34b;" target="_blank">raid</a> systems for the Bedrock edition's Village &amp; Pillage update.</li>
+              <li>Primarily focused on AI behaviors.</li>
+              <li>Drove strike team on mobile performance.</li>
+              <li>Prototyped a cancelled multiplayer project.</li>
+            </ul>
+            <div class="game-tags">
+              <span class="game-tag">Gameplay "Designgineering"</span>
+              <span class="game-tag">AI Behavior</span>
+              <span class="game-tag">C++</span>
+              <span class="game-tag">Custom Engine</span>
+              <span class="game-tag">CI/CD</span>
+              <span class="game-tag">Test Automation</span>
+            </div>
+          </article>
+        </div>
+
+        <!-- MEDIA PANEL -->
+        <aside class="game-media">
+          <div class="media-window">
+            <img id="media-image-1" src="placeholder-game1a.gif"/>
+            <div class="media-label" id="media-label1"></div>
+          </div>
+
+          <div class="media-window">
+            <img id="media-image-2" src="placeholder-game1b.gif"/>
+            <div class="media-label" id="media-label2"></div>
+          </div>
+        </aside>
+
+      </section>
+
+      <!-- WORK SAMPLES -->
+      <section class="samples-section">
+        <h3>Work Samples</h3>
+
+        <div class="samples-grid">
+          <a class="sample-card" href="https://www.youtube.com/watch?v=O7YnhsOQYPs" target="_blank" rel="noopener noreferrer">
+            <img src="./Assets/ChainLightning.jpg" alt="A link to a youtube video demo of my chain lightning design test plus a deep dive into the scripts and tests."/>
+            <span class="sample-title">Chain Lightning Design Test</span>
+          </a>
+
+          <a class="sample-card" href="https://www.youtube.com/watch?v=Ww9hUOkE4JY" target="_blank" rel="noopener noreferrer">
+            <img src="./Assets/TwoBrothers.png" alt="A link to a youtube video demo of a game I've been working on in my spare time." />
+            <span class="sample-title">Personal Project</span>
+          </a>
+
+          <a class="sample-card" href="https://youtu.be/09-Svsy-1Zc" target="_blank" rel="noopener noreferrer">
+            <img src="./Assets/DWYK_Thumbnail.jpg" alt="A link to a youtube video discussing the adage 'design what you know'." />
+            <span class="sample-title">Musings on Game Design -<br />An Insight into My Ethos</span>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>© Aaron Woodward · Game Design Portfolio</span>
+      <span><a href="https://www.linkedin.com/in/iamwoodward/" target="_blank">LinkedIn</a> · <a href="https://github.com/AaronWoodward" target="_blank">Personal GitHub</a></span>
+    </footer>
+  </div>
+
+<script>
+  const previews = {
+    game1: {
+      a: "./Assets/StarWars.gif",
+      b: "./Assets/Twist.gif",
+      caption: "Brick Life Star Wars Update - Lightsaber Battles",
+      caption2: "Odyssey Ninjago Update - Spinjitzu Ability"
+    },
+    game2: {
+      a: "./Assets/WorldGen.png",
+      b: "./Assets/blockbench.png",
+      caption: "SIMD World Generation",
+      caption2: "Blockbench Modeling Software"
+    },
+    game3: {
+      a: "./Assets/eday.jpg",
+      b: "./Assets/cqtestplugins.png",
+      caption: "",
+      caption2: "The CQ Test plugin is an enhanced descendant of the internal test framework."
+    },
+    game4: {
+      a: "./Assets/Illagers.gif",
+      b: "./Assets/ServerTestOutcomes.png",
+      caption: "Illager Patrol pathing / AI",
+      caption2: "Server tests saw great adoption and led to a boon in quality and confidence."
+    }
+  };
+
+  const img1 = document.getElementById("media-image-1");
+  const img2 = document.getElementById("media-image-2");
+  const label1 = document.getElementById("media-label1");
+  const label2 = document.getElementById("media-label2");
+  const cards = document.querySelectorAll(".game-card");
+
+  function fadeSwap(img, newSrc, newAlt) {
+    img.classList.remove("visible");
+
+    // Wait a frame so opacity 0 applies
+    requestAnimationFrame(() => {
+      img.src = newSrc;
+      img.alt = newAlt;
+
+      // Fade back in after the browser loads the new frame
+      img.onload = () => {
+        img.classList.add("visible");
+      };
+    });
+  }
+
+  function updatePreview(key) {
+    const p = previews[key];
+
+    fadeSwap(img1, p.a, p.caption);
+    fadeSwap(img2, p.b, p.caption2);
+
+    label1.textContent = p.caption;
+    label2.textContent = p.caption2;
+  }
+
+  function selectCard(card) {
+    cards.forEach(c => c.classList.remove("selected"));
+    card.classList.add("selected");
+  }
+
+  cards.forEach(card => {
+    card.addEventListener("click", () => {
+      const key = card.getAttribute("data-game");
+      selectCard(card);
+      updatePreview(key);
+    });
+  });
+
+  // Initialize
+  const first = document.querySelector('.game-card[data-game="game1"]');
+  selectCard(first);
+  updatePreview("game1");
+</script>
+
+
+
